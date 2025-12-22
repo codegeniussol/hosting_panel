@@ -11,6 +11,19 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# make a variable for each script path
+LEMP_SETUP_SCRIPT="$SCRIPT_DIR/lemp_setup.sh"
+PHPMYADMIN_SCRIPT="$SCRIPT_DIR/phpmyadmin_docker.sh"
+USER_MANAGEMENT_SCRIPT="$SCRIPT_DIR/user_management.sh"
+QUOTA_MANAGEMENT_SCRIPT="$SCRIPT_DIR/quota_management.sh"
+VHOST_MANAGEMENT_SCRIPT="$SCRIPT_DIR/vhost_management.sh"
+SSL_MANAGEMENT_SCRIPT="$SCRIPT_DIR/ssl_management.sh"
+DNS_MANAGEMENT_SCRIPT="$SCRIPT_DIR/dns_management.sh"
+FTP_MANAGEMENT_SCRIPT="$SCRIPT_DIR/ftp_management.sh"
+MYSQL_DB_MANAGEMENT_SCRIPT="$SCRIPT_DIR/mysql_db_management.sh"
+MYSQL_USER_MANAGEMENT_SCRIPT="$SCRIPT_DIR/mysql_user_management.sh"
+MYSQL_PERM_MANAGEMENT_SCRIPT="$SCRIPT_DIR/mysql_permissions.sh"
+
 
 clear
 cat << "EOF"
@@ -85,26 +98,27 @@ setup_menu() {
     
     case $setup_choice in
         1) 
-            bash "$SCRIPT_DIR/setup-lemp.sh"
+            bash "$LEMP_SETUP_SCRIPT"
             ;;
         2) 
-            bash "$SCRIPT_DIR/setup-phpmyadmin.sh"
+            bash "$PHPMYADMIN_SCRIPT"
             ;;
         3) 
-            bash "$SCRIPT_DIR/manage-quota.sh" setup
+            bash "$QUOTA_MANAGEMENT_SCRIPT" setup
             ;;
         4) 
-            bash "$SCRIPT_DIR/manage-ftp.sh" setup
+            bash "$FTP_MANAGEMENT_SCRIPT" setup
             ;;
         5) 
-            bash "$SCRIPT_DIR/manage-dns.sh" setup
+            bash "$DNS_MANAGEMENT_SCRIPT" setup
             ;;
         6)
             echo -e "${YELLOW}Installing complete LEMP stack...${NC}"
-            bash "$SCRIPT_DIR/setup-lemp.sh"
-            bash "$SCRIPT_DIR/setup-phpmyadmin.sh"
-            bash "$SCRIPT_DIR/manage-quota.sh" setup
-            bash "$SCRIPT_DIR/manage-ftp.sh" setup
+            bash "$LEMP_SETUP_SCRIPT"
+            bash "$PHPMYADMIN_SCRIPT"
+            bash "$QUOTA_MANAGEMENT_SCRIPT" setup
+            bash "$FTP_MANAGEMENT_SCRIPT" setup
+            bash "$DNS_MANAGEMENT_SCRIPT" setup
             echo -e "${GREEN}Complete setup finished!${NC}"
             ;;
         0) show_main_menu ;;
@@ -133,22 +147,22 @@ user_menu() {
     case $user_choice in
         1) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-user.sh" create "$username"
+            bash "$USER_MANAGEMENT_SCRIPT" create "$username"
             ;;
         2) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-user.sh" delete "$username"
+            bash "$USER_MANAGEMENT_SCRIPT" delete "$username"
             ;;
         3) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-user.sh" modify "$username"
+            bash "$USER_MANAGEMENT_SCRIPT" modify "$username"
             ;;
         4) 
-            bash "$SCRIPT_DIR/manage-user.sh" list
+            bash "$USER_MANAGEMENT_SCRIPT" list
             ;;
         5) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-user.sh" info "$username"
+            bash "$USER_MANAGEMENT_SCRIPT" info "$username"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; user_menu ;;
@@ -177,18 +191,18 @@ quota_menu() {
             read -p "Enter username: " username
             read -p "Enter soft limit (MB): " soft
             read -p "Enter hard limit (MB): " hard
-            bash "$SCRIPT_DIR/manage-quota.sh" set "$username" "$soft" "$hard"
+            bash "$QUOTA_MANAGEMENT_SCRIPT" set "$username" "$soft" "$hard"
             ;;
         2) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-quota.sh" remove "$username"
+            bash "$QUOTA_MANAGEMENT_SCRIPT" remove "$username"
             ;;
         3) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-quota.sh" check "$username"
+            bash "$QUOTA_MANAGEMENT_SCRIPT" check "$username"
             ;;
         4) 
-            bash "$SCRIPT_DIR/manage-quota.sh" report
+            bash "$QUOTA_MANAGEMENT_SCRIPT" report
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; quota_menu ;;
@@ -218,26 +232,26 @@ vhost_menu() {
         1) 
             read -p "Enter domain: " domain
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-vhost.sh" create "$domain" "$username"
+            bash "$VHOST_MANAGEMENT_SCRIPT" create "$domain" "$username"
             ;;
         2) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-vhost.sh" delete "$domain"
+            bash "$VHOST_MANAGEMENT_SCRIPT" delete "$domain"
             ;;
         3) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-vhost.sh" enable "$domain"
+            bash "$VHOST_MANAGEMENT_SCRIPT" enable "$domain"
             ;;
         4) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-vhost.sh" disable "$domain"
+            bash "$VHOST_MANAGEMENT_SCRIPT" disable "$domain"
             ;;
         5) 
-            bash "$SCRIPT_DIR/manage-vhost.sh" list
+            bash "$VHOST_MANAGEMENT_SCRIPT" list
             ;;
         6) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-vhost.sh" info "$domain"
+            bash "$VHOST_MANAGEMENT_SCRIPT" info "$domain"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; vhost_menu ;;
@@ -266,25 +280,25 @@ ssl_menu() {
     case $ssl_choice in
         1) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-ssl.sh" install "$domain"
+            bash "$SSL_MANAGEMENT_SCRIPT" install "$domain"
             ;;
         2) 
             read -p "Enter domain (leave empty for all): " domain
-            bash "$SCRIPT_DIR/manage-ssl.sh" renew "$domain"
+            bash "$SSL_MANAGEMENT_SCRIPT" renew "$domain"
             ;;
         3) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-ssl.sh" remove "$domain"
+            bash "$SSL_MANAGEMENT_SCRIPT" remove "$domain"
             ;;
         4) 
-            bash "$SCRIPT_DIR/manage-ssl.sh" list
+            bash "$SSL_MANAGEMENT_SCRIPT" list
             ;;
         5) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-ssl.sh" info "$domain"
+            bash "$SSL_MANAGEMENT_SCRIPT" info "$domain"
             ;;
         6) 
-            bash "$SCRIPT_DIR/manage-ssl.sh" auto-renew
+            bash "$SSL_MANAGEMENT_SCRIPT" auto-renew
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; ssl_menu ;;
@@ -313,29 +327,29 @@ dns_menu() {
     case $dns_choice in
         1) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-dns.sh" add-zone "$domain"
+            bash "$DNS_MANAGEMENT_SCRIPT" add-zone "$domain"
             ;;
         2) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-dns.sh" remove-zone "$domain"
+            bash "$DNS_MANAGEMENT_SCRIPT" remove-zone "$domain"
             ;;
         3) 
             read -p "Enter domain: " domain
             read -p "Enter record type (A/AAAA/CNAME/MX/TXT): " type
             read -p "Enter value: " value
-            bash "$SCRIPT_DIR/manage-dns.sh" add-record "$domain" "$type" "$value"
+            bash "$DNS_MANAGEMENT_SCRIPT" add-record "$domain" "$type" "$value"
             ;;
         4) 
             read -p "Enter domain: " domain
             read -p "Enter record type: " type
-            bash "$SCRIPT_DIR/manage-dns.sh" remove-record "$domain" "$type"
+            bash "$DNS_MANAGEMENT_SCRIPT" remove-record "$domain" "$type"
             ;;
         5) 
-            bash "$SCRIPT_DIR/manage-dns.sh" list
+            bash "$DNS_MANAGEMENT_SCRIPT" list
             ;;
         6) 
             read -p "Enter domain: " domain
-            bash "$SCRIPT_DIR/manage-dns.sh" check "$domain"
+            bash "$DNS_MANAGEMENT_SCRIPT" check "$domain"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; dns_menu ;;
@@ -364,27 +378,27 @@ ftp_menu() {
     case $ftp_choice in
         1) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-ftp.sh" add "$username"
+            bash "$FTP_MANAGEMENT_SCRIPT" add "$username"
             ;;
         2) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-ftp.sh" remove "$username"
+            bash "$FTP_MANAGEMENT_SCRIPT" remove "$username"
             ;;
         3) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-ftp.sh" modify "$username"
+            bash "$FTP_MANAGEMENT_SCRIPT" modify "$username"
             ;;
         4) 
-            bash "$SCRIPT_DIR/manage-ftp.sh" list
+            bash "$FTP_MANAGEMENT_SCRIPT" list
             ;;
         5) 
             read -p "Enter username: " username
             read -p "Enter quota (MB): " quota
-            bash "$SCRIPT_DIR/manage-ftp.sh" quota "$username" "$quota"
+            bash "$FTP_MANAGEMENT_SCRIPT" quota "$username" "$quota"
             ;;
         6) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-ftp.sh" info "$username"
+            bash "$FTP_MANAGEMENT_SCRIPT" info "$username"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; ftp_menu ;;
@@ -414,32 +428,32 @@ mysql_db_menu() {
     case $db_choice in
         1) 
             read -p "Enter database name: " dbname
-            bash "$SCRIPT_DIR/manage-mysql-db.sh" create "$dbname"
+            bash "$MYSQL_DB_MANAGEMENT_SCRIPT" create "$dbname"
             ;;
         2) 
             read -p "Enter database name: " dbname
-            bash "$SCRIPT_DIR/manage-mysql-db.sh" delete "$dbname"
+            bash "$MYSQL_DB_MANAGEMENT_SCRIPT" delete "$dbname"
             ;;
         3) 
-            bash "$SCRIPT_DIR/manage-mysql-db.sh" list
+            bash "$MYSQL_DB_MANAGEMENT_SCRIPT" list
             ;;
         4) 
             read -p "Enter database name: " dbname
-            bash "$SCRIPT_DIR/manage-mysql-db.sh" info "$dbname"
+            bash "$MYSQL_DB_MANAGEMENT_SCRIPT" info "$dbname"
             ;;
         5) 
             read -p "Enter database name: " dbname
-            bash "$SCRIPT_DIR/manage-mysql-db.sh" backup "$dbname"
+            bash "$MYSQL_DB_MANAGEMENT_SCRIPT" backup "$dbname"
             ;;
         6) 
             read -p "Enter database name: " dbname
             read -p "Enter backup file: " file
-            bash "$SCRIPT_DIR/manage-mysql-db.sh" restore "$dbname" "$file"
+            bash "$MYSQL_DB_MANAGEMENT_SCRIPT" restore "$dbname" "$file"
             ;;
         7) 
             read -p "Enter database name: " dbname
             read -p "Enter SQL file: " file
-            bash "$SCRIPT_DIR/manage-mysql-db.sh" import "$dbname" "$file"
+            bash "$MYSQL_DB_MANAGEMENT_SCRIPT" import "$dbname" "$file"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; mysql_db_menu ;;
@@ -468,26 +482,26 @@ mysql_user_menu() {
     case $mysql_choice in
         1) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-mysql-user.sh" create "$username"
+            bash "$MYSQL_USER_MANAGEMENT_SCRIPT" create "$username"
             ;;
         2) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-mysql-user.sh" delete "$username"
+            bash "$MYSQL_USER_MANAGEMENT_SCRIPT" delete "$username"
             ;;
         3) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-mysql-user.sh" modify "$username"
+            bash "$MYSQL_USER_MANAGEMENT_SCRIPT" modify "$username"
             ;;
         4) 
-            bash "$SCRIPT_DIR/manage-mysql-user.sh" list
+            bash "$MYSQL_USER_MANAGEMENT_SCRIPT" list
             ;;
         5) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-mysql-user.sh" info "$username"
+            bash "$MYSQL_USER_MANAGEMENT_SCRIPT" info "$username"
             ;;
         6) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-mysql-user.sh" password "$username"
+            bash "$MYSQL_USER_MANAGEMENT_SCRIPT" password "$username"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; mysql_user_menu ;;
@@ -516,27 +530,27 @@ mysql_perm_menu() {
         1) 
             read -p "Enter username: " username
             read -p "Enter database: " database
-            bash "$SCRIPT_DIR/manage-mysql-permissions.sh" grant "$username" "$database"
+            bash "$MYSQL_PERM_MANAGEMENT_SCRIPT" grant "$username" "$database"
             ;;
         2) 
             read -p "Enter username: " username
             read -p "Enter database: " database
-            bash "$SCRIPT_DIR/manage-mysql-permissions.sh" revoke "$username" "$database"
+            bash "$MYSQL_PERM_MANAGEMENT_SCRIPT" revoke "$username" "$database"
             ;;
         3) 
             read -p "Enter username: " username
-            bash "$SCRIPT_DIR/manage-mysql-permissions.sh" show "$username"
+            bash "$MYSQL_PERM_MANAGEMENT_SCRIPT" show "$username"
             ;;
         4) 
             read -p "Enter username: " username
             read -p "Enter database: " database
             read -p "Enter template (readonly/readwrite/full/admin): " template
-            bash "$SCRIPT_DIR/manage-mysql-permissions.sh" template "$username" "$database" "$template"
+            bash "$MYSQL_PERM_MANAGEMENT_SCRIPT" template "$username" "$database" "$template"
             ;;
         5) 
             read -p "Enter username: " username
             read -p "Enter remote host/IP: " host
-            bash "$SCRIPT_DIR/manage-mysql-permissions.sh" remote "$username" "$host"
+            bash "$MYSQL_PERM_MANAGEMENT_SCRIPT" remote "$username" "$host"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; mysql_perm_menu ;;
@@ -578,7 +592,7 @@ phpmyadmin_menu() {
             cd /opt/phpmyadmin && docker-compose logs -f
             ;;
         5) 
-            bash "$SCRIPT_DIR/setup-phpmyadmin.sh"
+            bash "$PHPMYADMIN_SCRIPT"
             ;;
         0) show_main_menu ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; phpmyadmin_menu ;;
