@@ -612,7 +612,9 @@ system_status() {
     echo -e "${YELLOW}Service Status:${NC}"
     systemctl is-active nginx 2>/dev/null && echo -e "  Nginx: ${GREEN}Running${NC}" || echo -e "  Nginx: ${RED}Stopped${NC}"
     systemctl is-active mariadb 2>/dev/null && echo -e "  MariaDB: ${GREEN}Running${NC}" || echo -e "  MariaDB: ${RED}Stopped${NC}"
-    systemctl is-active php*-fpm 2>/dev/null && echo -e "  PHP-FPM: ${GREEN}Running${NC}" || echo -e "  PHP-FPM: ${RED}Stopped${NC}"
+    for php_version in 7.0 8.1 8.2 8.3; do
+        systemctl is-active php${php_version}-fpm 2>/dev/null && echo -e "  PHP ${php_version}-FPM: ${GREEN}Running${NC}" || echo -e "  PHP ${php_version}-FPM: ${RED}Stopped${NC}"
+    done
     systemctl is-active vsftpd 2>/dev/null && echo -e "  FTP: ${GREEN}Running${NC}" || echo -e "  FTP: ${RED}Not Installed${NC}"
     systemctl is-active bind9 2>/dev/null || systemctl is-active named 2>/dev/null && echo -e "  DNS: ${GREEN}Running${NC}" || echo -e "  DNS: ${RED}Not Installed${NC}"
     docker ps | grep -q phpmyadmin && echo -e "  phpMyAdmin: ${GREEN}Running${NC}" || echo -e "  phpMyAdmin: ${RED}Stopped${NC}"

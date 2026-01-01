@@ -124,7 +124,7 @@ if [ "$CREATE_PROXY" = "y" ] || [ "$CREATE_PROXY" = "Y" ]; then
     echo -e "${YELLOW}Enter domain name for phpMyAdmin (e.g., phpmyadmin.example.com):${NC}"
     read -r DOMAIN
     
-    cat > /etc/nginx/sites-available/phpmyadmin <<EOF
+    cat > /etc/nginx/sites-available/${DOMAIN} <<EOF
 server {
     listen 80;
     server_name ${DOMAIN};

@@ -115,7 +115,7 @@ set_quota() {
     
     # Set quota
     echo -e "${YELLOW}Setting quota for $username...${NC}"
-    setquota -u $username $SOFT_BLOCKS $HARD_BLOCKS 0 0 /home
+    setquota -u $username $SOFT_BLOCKS $HARD_BLOCKS 0 0 /home/$username
     
     echo -e "${GREEN}Quota set successfully${NC}"
     echo -e "${YELLOW}Soft limit:${NC} ${soft_mb}MB (${SOFT_BLOCKS} blocks)"
