@@ -150,7 +150,7 @@ server {
 }
 EOF
     
-    ln -sf /etc/nginx/sites-available/phpmyadmin /etc/nginx/sites-enabled/
+    ln -sf /etc/nginx/sites-available/${DOMAIN} /etc/nginx/sites-enabled/
     nginx -t && systemctl reload nginx
     
     echo -e "${GREEN}Nginx reverse proxy created for ${DOMAIN}${NC}"

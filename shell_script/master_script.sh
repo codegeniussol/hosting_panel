@@ -23,6 +23,8 @@ FTP_MANAGEMENT_SCRIPT="$SCRIPT_DIR/ftp_management.sh"
 MYSQL_DB_MANAGEMENT_SCRIPT="$SCRIPT_DIR/mysql_db_management.sh"
 MYSQL_USER_MANAGEMENT_SCRIPT="$SCRIPT_DIR/mysql_user_management.sh"
 MYSQL_PERM_MANAGEMENT_SCRIPT="$SCRIPT_DIR/mysql_permissions.sh"
+BACKUP_SITES_SCRIPT="$SCRIPT_DIR/backup_all_sites.sh"
+MAIL_MANAGEMENT_SCRIPT="$SCRIPT_DIR/mail_management.sh"
 
 
 clear
@@ -59,6 +61,8 @@ show_main_menu() {
     echo -e "${GREEN}10.${NC} MySQL Permissions Management"
     echo -e "${GREEN}11.${NC} phpMyAdmin Management"
     echo -e "${GREEN}12.${NC} System Status & Monitoring"
+    echo -e "${GREEN}13.${NC} Quick Backup All Sites and Databases"
+    echo -e "${GREEN}14.${NC} Mail Server Management"
     echo -e "${GREEN}0.${NC}  Exit"
     echo ""
     read -p "Select option: " main_choice
@@ -76,6 +80,8 @@ show_main_menu() {
         10) mysql_perm_menu ;;
         11) phpmyadmin_menu ;;
         12) system_status ;;
+        13) backup_all_sites ;;
+        14) mail_menu ;;
         0) exit 0 ;;
         *) echo -e "${RED}Invalid option${NC}"; sleep 1; show_main_menu ;;
     esac
@@ -636,5 +642,72 @@ system_status() {
     show_main_menu
 }
 
+# Quick Run menu
+backup_all_sites() {
+    clear
+    echo -e "${YELLOW}=== Quick Backup All Sites and Databases ===${NC}"
+    echo ""
+    echo "1. Backup All Sites and Databases"
+    echo "0. Back to Main Menu"
+    echo ""
+    read -p "Select option: " quick_choice
+    
+    case $quick_choice in
+        1) 
+            bash "$BACKUP_SITES_SCRIPT"
+            ;;
+        0) show_main_menu ;;
+        *) echo -e "${RED}Invalid option${NC}"; sleep 1; backup_all_sites ;;
+    esac
+    
+    echo ""
+    read -p "Press Enter to continue..."
+    backup_all_sites
+}
+
+# Mail menu
+mail_menu() {
+    clear
+    echo -e "${YELLOW}=== Mail Server Management ===${NC}"
+    echo ""
+    echo "1. Setup Mail Server (Postfix/Dovecot)"
+    echo "2. Add Mail User"
+    echo "3. Remove Mail User"
+    echo "4. List Mail Users"
+    echo "5. Show Mail User Info"
+    echo "0. Back to Main Menu"
+    echo ""
+    read -p "Select option: " mail_choice
+    
+    case $mail_choice in
+        1) 
+            read -p "Enter domain: " domain
+            bash "$MAIL_MANAGEMENT_SCRIPT" setup "$domain"
+            ;;
+        2) 
+            read -p "Enter email: " email
+            bash "$MAIL_MANAGEMENT_SCRIPT" add-user "$email"
+            ;;
+        3) 
+            read -p "Enter email: " email
+            bash "$MAIL_MANAGEMENT_SCRIPT" remove-user "$email"
+            ;;
+        4) 
+            bash "$MAIL_MANAGEMENT_SCRIPT" list-users
+            ;;
+        5) 
+            read -p "Enter email: " email
+            bash "$MAIL_MANAGEMENT_SCRIPT" info "$email"
+            ;;
+        0) show_main_menu ;;
+        *) echo -e "${RED}Invalid option${NC}"; sleep 1; mail_menu ;;
+    esac
+    
+    echo ""
+    read -p "Press Enter to continue..."
+    mail_menu
+}
+
 # Start the menu
+
 show_main_menu
